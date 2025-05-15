@@ -4,6 +4,8 @@ import {backend} from '../models';
 
 export function ConvertBase64Image(arg1:string,arg2:string,arg3:string,arg4:number):Promise<string>;
 
+export function DeleteAllConvertedImages():Promise<void>;
+
 export function DeleteConvertedImage(arg1:string):Promise<void>;
 
 export function GetConvertedImageBase64(arg1:string):Promise<string>;

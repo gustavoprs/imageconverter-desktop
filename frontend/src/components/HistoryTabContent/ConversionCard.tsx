@@ -48,7 +48,7 @@ export default function ConversionCard({ image }: ConversionCardProps){
 				<Button 
 					size="icon" 
 					variant="ghost" 
-					className=" text-destructive hover:bg-destructive/10 hover:text-destructive"
+					className=" text-destructive hover:bg-destructive/5 hover:text-destructive"
 					onClick={deleteImage}
 				>
 					<Trash2Icon />

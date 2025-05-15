@@ -1,5 +1,6 @@
 import { useConvertedImages } from "@/contexts/ConvertedImagesContext";
 import ConversionCard from "./ConversionCard";
+import ClearHistoryAlertDialog from "./ClearHistoryAlertDialog";
 
 export default function HistoryTabContent(){
 
@@ -7,7 +8,10 @@ export default function HistoryTabContent(){
 
 	return (
 		<div className="flex flex-col rounded-lg  bg-background shadow">
-			<span className=" p-4 text-lg font-medium">Recent Conversions</span>
+			<div className=" flex justify-between items-center p-4">
+				<span className=" text-lg font-medium">Recent Conversions</span>
+				{convertedImages.length !== 0 && <ClearHistoryAlertDialog />}
+			</div>
 			<div className=" flex flex-col">
 				{convertedImages.map((c, index) => (
 					<ConversionCard key={`${c.name}${c.size}${index}`} image={c} />

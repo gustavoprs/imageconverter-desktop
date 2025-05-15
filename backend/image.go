@@ -94,6 +94,17 @@ func (i *ImageService) DeleteConvertedImage(filename string) error {
 	return nil
 }
 
+
+func (i *ImageService) DeleteAllConvertedImages() error {
+	outputDir := "./output"
+
+	if err := os.RemoveAll(outputDir); err != nil {
+		return err
+	}
+
+	return os.MkdirAll(outputDir, 0755)
+}
+
 // Convert
 func (i *ImageService) ConvertBase64Image(filename string, base64Data string, format string, quality int) (string, error) {
 	if quality < 1 || quality > 100 {

@@ -6,6 +6,10 @@ export function ConvertBase64Image(arg1, arg2, arg3, arg4) {
   return window['go']['backend']['ImageService']['ConvertBase64Image'](arg1, arg2, arg3, arg4);
 }
 
+export function DeleteAllConvertedImages() {
+  return window['go']['backend']['ImageService']['DeleteAllConvertedImages']();
+}
+
 export function DeleteConvertedImage(arg1) {
   return window['go']['backend']['ImageService']['DeleteConvertedImage'](arg1);
 }
