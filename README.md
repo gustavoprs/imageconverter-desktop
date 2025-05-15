@@ -20,22 +20,4 @@
 - **Backend:** Go
 - **Frontend:** React + TailwindCSS + Shadcn/UI
 
----
-
-## 🚀 Getting Started
-
-### Requirements
-
-- Go 1.23+
-- Node.js (latest LTS)
-- [bun](https://bun.sh/)
-- [Wails CLI](https://wails.io/docs/gettingstarted/installation)
-
-### Installation
-
-```bash
-# Navigate to the project folder
-cd apps/desktop
-
-# Run the app in development mode
-wails dev
+Made by [gustavoprs](https://github.com/gustavoprs)
