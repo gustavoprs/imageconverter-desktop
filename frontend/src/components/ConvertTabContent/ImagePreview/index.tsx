@@ -7,6 +7,7 @@ import { ConvertBase64Image } from "@/../wailsjs/go/backend/ImageService"
 import { useConversionOptions } from "@/contexts/ConversionOptionsContext"
 import type { backend } from "wailsjs/go/models"
 import { useConvertedImages } from "@/contexts/ConvertedImagesContext"
+import { toast } from "sonner"
 
 export default function ImagePreview(){
 
@@ -14,32 +15,57 @@ export default function ImagePreview(){
 	const { outputFormat, outputQuality } = useConversionOptions()
 	const { setConvertedImages } = useConvertedImages()
 
-	async function handleImageUpload() {
-		for (const file of selectedImages) {
-			const reader = new FileReader()
-			reader.onload = async () => {
-				const base64Data = (reader.result as string).split(",")[1]
-				const filename = file.name
+	async function handleImageConversionAndDownload() {
+		const tasks = selectedImages.map(file => {
+			return new Promise<void>((resolve, reject) => {
+				const reader = new FileReader()
+				reader.onload = async () => {
+					const base64Data = (reader.result as string).split(",")[1]
+					const filename = file.name
 
-				try {
-					const outPath = await ConvertBase64Image(filename, base64Data, outputFormat, outputQuality)
-					console.log(outPath)
+					try {
+						await ConvertBase64Image(filename, base64Data, outputFormat, outputQuality)
 
-					const convertedImage = {
-						name: `${file.name.substring(0, file.name.lastIndexOf("."))}.${outputFormat}`,
-						modTime: new Date(),
-						size: file.size,
-						path: `data:image/${outputFormat};base64,${base64Data}`
+						const convertedImage = {
+							name: `${filename.substring(0, filename.lastIndexOf("."))}.${outputFormat}`,
+							modTime: new Date(),
+							size: file.size,
+							path: `data:image/${outputFormat};base64,${base64Data}`
+						}
+
+						downloadImage(convertedImage as backend.ConvertedImage)
+						setConvertedImages(prev =>
+							[...prev.filter(i => i.name !== convertedImage.name), convertedImage as backend.ConvertedImage]
+						)
+
+						resolve()
+					} catch (error) {
+						console.error(error)
+						reject()
 					}
-
-					downloadImage(convertedImage as backend.ConvertedImage)
-					setConvertedImages(prev => [...prev.filter(i => i.name !== convertedImage.name), convertedImage as backend.ConvertedImage])
-				} catch (error){
-					console.error(error)
 				}
-			}
 
-			reader.readAsDataURL(file)
+				reader.readAsDataURL(file)
+			})
+		})
+
+		const results = await Promise.allSettled(tasks)
+
+		const successCount = results.filter(r => r.status === "fulfilled").length
+		const errorCount = results.length - successCount
+
+		if (errorCount === 0) {
+			toast.success(
+				selectedImages.length === 1
+					? "Image converted successfully"
+					: "All images converted successfully"
+			)
+		} else if (successCount > 0) {
+			toast(
+				`${successCount} out of ${selectedImages.length} images converted successfully`
+			)
+		} else {
+			toast.error("Oops... something went wrong.")
 		}
 
 		setSelectedImages([])
@@ -58,7 +84,7 @@ export default function ImagePreview(){
 				</div>
 				<div className=" flex justify-end items-center">
 					<Button
-						onClick={handleImageUpload}
+						onClick={handleImageConversionAndDownload}
 					>
 						<DownloadIcon />
 						Convert & Download
